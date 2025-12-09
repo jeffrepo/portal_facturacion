@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- TEMPLATE (debe ir antes de usarlo en website.page) -->
+        <template id="portal_facturacion_page_view" name="Portal Facturación Página">
+            <t t-call="website.layout">
+                <div class="container mt-4">
+
+                    <h1>Portal de Facturación</h1>
+
+                    <!-- FORMULARIO -->
+                    <form action="/portal/facturacion/buscar" method="post">
+
+                        <div class="form-group mt-3">
+                            <label>Ingrese su número de pedido:</label>
+                            <input type="text" name="order_number" class="form-control" required="required"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">
+                            Buscar
+                        </button>
+
+                    </form>
+
+                </div>
+            </t>
+        </template>
+
+        <template id="portal_facturacion_no_encontrado" name="Pedido No Encontrado">
+            <t t-call="website.layout">
+                <div class="container mt-4">
+                    <h2>No se ha encontrado ningún pedido</h2>
+                    <p>
+                        No se encontró ningún pedido con el número:
+                        <strong><t t-esc="numero"/></strong>
+                    </p>
+
+                    <a href="/portal/facturacion" class="btn btn-secondary mt-3">
+                        Regresar
+                    </a>
+                </div>
+            </t>
+        </template>
+
+        <template id="portal_facturacion_detalle" name="Detalle Factura">
+            <t t-call="website.layout">
+                <div class="container mt-4">
+                    <h1>Comprobante Fiscal Digital</h1>
+
+                    <form action="/portal/facturacion/crear_factura" method="post">
+                        <div class="form-group mt-3">
+
+                            <input type="hidden" name="order_id" t-att-value="order.id"/>
+
+                            <label>Razón social:</label>
+                            <input type="text" name="company_name" class="form-control" required="required"/>
+
+                            <label>R.F.C:</label>
+                            <input type="text" name="r_f_C" class="form-control" required="required"/>
+
+                            <label>Código postal</label>
+                            <input type="text" name="zip" class="form-control"/>
+
+                            <label>Calle</label>
+                            <input type="text" name="street" class="form-control"/>
+
+                            <label>Ext</label>
+                            <input type="text" name="ext" class="form-control"/>
+
+                            <label>Int</label>
+                            <input type="text" name="int" class="form-control"/>
+
+                            <label>Colonia</label>
+                            <input type="text" name="cologne" class="form-control"/>
+
+                            <label>Ciudad</label>
+                            <input type="text" name="city" class="form-control" required="required"/>
+
+                            <label>Estado</label>
+                            <select name="state_id" class="form-control" required="required">
+                                <option value="">Seleccione un estado</option>
+                                <t t-foreach="states" t-as="s">
+                                    <option t-att-value="s.id">
+                                        <t t-esc="s.name"/>
+                                    </option>
+                                </t>
+                            </select>
+
+
+                            <label>País</label>
+                            <select name="country_id" class="form-control" required="required">
+                                <option value="">Seleccione un país</option>
+                                <t t-foreach="countries" t-as="c">
+                                    <option t-att-value="c.id">
+                                        <t t-esc="c.name"/>
+                                    </option>
+                                </t>
+                            </select>
+
+
+                            <label>Uso de CFDI</label>
+                            <input type="text" name="cfdi" class="form-control" required="required" placeholder="El tipo de origen podría ser: - 01: Nota de crédito - 02: Nota de débito de los documentos relacionados - 03: Devolución de mercancía sobre facturas o traslados previos
+                                - 04: Sustitución de los CFDI previos
+                                - 05: Traslados de mercancías facturados previamente
+                                - 06: Factura generada por los traslados previos
+                                - 07: CFDI por aplicación de anticipo"
+                                title="Tipo de origen | UUID1, UUID2, ..., UUIDn. Tipos: 01=Nota crédito, 02=Nota débito, 03=Devolución, 04=Sustitución, 05=Traslados, 06=Factura traslados, 07=Anticipo"/>
+
+                            <label>Forma de pago</label>
+                            <select name="payment_method_id" class="form-control" required="required">
+                                <option value="">Seleccione un metodo de pago</option>
+                                <t t-foreach="payment_method" t-as="p">
+                                    <option t-att-value="p.id">
+                                        <t t-esc="p.name"/>
+                                    </option>
+                                </t>
+                            </select>
+
+                            <label>Regimen fiscal</label>
+                            <select name="fiscal_regime_id" class="form-control" required="required">
+                                <option value="">Seleccione un regimen fiscal</option>
+                                <t t-foreach="fiscal_regime" t-as="f">
+                                    <option t-att-value="f.id">
+                                        <t t-esc="f.name"/>
+                                    </option>
+                                </t>
+                            </select>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">
+                            Crear factura
+                        </button>    
+                    </form>
+
+                    <a href="/portal/facturacion" class="btn btn-secondary mt-4">
+                        Buscar otro pedido
+                    </a>
+
+                </div>
+            </t>
+        </template>
+
+
+
+
+        <!-- REGISTRO DE LA PÁGINA WEBSITE -->
+        <record id="portal_facturacion_page" model="website.page">
+            <field name="name">Portal Facturación</field>
+            <field name="url">/portal/facturacion</field>
+            <field name="website_published">true</field>
+            <field name="view_id" ref="portal_facturacion.portal_facturacion_page_view"/>
+        </record>
+
+    </data>
+</odoo>
