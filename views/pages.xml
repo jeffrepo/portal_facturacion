@@ -43,86 +43,150 @@
             </t>
         </template>
 
+        <template id="portal_facturacion_identificar_cliente" name="Identificación de Cliente CFDI">
+            <t t-call="website.layout">
+                <div class="container mt-4">
+                    <h1>Facturación CFDI</h1>
+                    <h3>Pedido: <t t-esc="order.pos_reference"/></h3>
+
+                    <div class="alert alert-info" role="alert">
+                        Para iniciar su facturación, ingrese su **Registro Federal de Contribuyentes (RFC)**.
+                    </div>
+
+                    <form action="/portal/facturacion/procesar_rfc" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="order_id" t-att-value="order.id"/>
+
+                        <div class="form-group mt-3">
+                            <label for="rfc">RFC (Registro Federal de Contribuyentes)</label>
+                            <input type="text" name="rfc" id="rfc" class="form-control" required="required" 
+                                placeholder="Ej: XXXX000000XXX" 
+                                title="Ingrese su RFC completo."/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">
+                            Continuar Facturación
+                        </button> 
+                        
+                        <a href="/portal/facturacion" class="btn btn-secondary mt-3 ml-2">
+                            Cancelar y buscar otro pedido
+                        </a>
+                    </form>
+
+                </div>
+            </t>
+        </template>
+    
+
         <template id="portal_facturacion_detalle" name="Detalle Factura">
             <t t-call="website.layout">
                 <div class="container mt-4">
                     <h1>Comprobante Fiscal Digital</h1>
 
+                    <!-- Agregar overlay de carga (oculto inicialmente) -->
+                    <div id="loading-overlay" style="
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.7);
+                        z-index: 9999;
+                        color: white;
+                        text-align: center;
+                        padding-top: 20%;
+                    ">
+                        <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <h3 class="mt-3">Generando su factura, por favor espere...</h3>
+                    </div>
+
                     <form action="/portal/facturacion/crear_factura" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <div class="form-group mt-3">
 
                             <input type="hidden" name="order_id" t-att-value="order.id"/>
 
-                            <label>Razón social:</label>
-                            <input type="text" name="company_name" class="form-control" required="required"/>
+                            <label for="company_name">Razón social:</label>
+                            <input type="text" name="company_name" id="company_name" class="form-control" required="required"
+                                t-att-value="partner and partner.name or ''" />
 
-                            <label>R.F.C:</label>
-                            <input type="text" name="r_f_C" class="form-control" required="required"/>
+                            <label for="r_f_C">R.F.C:</label>
+                            <input type="text" name="r_f_C" id="r_f_C" class="form-control" required="required"
+                                t-att-value="partner and partner.vat or ''" 
+                                t-att-readonly="'readonly' if partner else None"/>
 
-                            <label>Código postal</label>
-                            <input type="text" name="zip" class="form-control"/>
+                            <label for="zip">Código postal</label>
+                            <input type="text" name="zip" id="zip" class="form-control"
+                                t-att-value="partner and partner.zip or ''" />
 
-                            <label>Calle</label>
-                            <input type="text" name="street" class="form-control"/>
+                            <label for="street">Calle</label>
+                            <input type="text" name="street" id="street" class="form-control"
+                                t-att-value="partner and partner.street or ''" />
 
-                            <label>Ext</label>
-                            <input type="text" name="ext" class="form-control"/>
+                            <label for="ext">Ext</label>
+                            <input type="text" name="ext" id="ext" class="form-control" />
 
-                            <label>Int</label>
-                            <input type="text" name="int" class="form-control"/>
+                            <label for="int">Int</label>
+                            <input type="text" name="int" id="int" class="form-control" />
 
-                            <label>Colonia</label>
-                            <input type="text" name="cologne" class="form-control"/>
+                            <label for="cologne">Colonia</label>
+                            <input type="text" name="cologne" id="cologne" class="form-control" />
 
-                            <label>Ciudad</label>
-                            <input type="text" name="city" class="form-control" required="required"/>
+                            <label for="city">Ciudad</label>
+                            <input type="text" name="city" id="city" class="form-control" required="required"
+                                t-att-value="partner and partner.city or ''" />
 
-                            <label>Estado</label>
-                            <select name="state_id" class="form-control" required="required">
+                            <label for="state_id">Estado</label>
+                            <select name="state_id" id="state_id" class="form-control" required="required">
                                 <option value="">Seleccione un estado</option>
                                 <t t-foreach="states" t-as="s">
-                                    <option t-att-value="s.id">
+                                    <option t-att-value="s.id" t-att-selected="partner and partner.state_id and s.id == partner.state_id.id">
                                         <t t-esc="s.name"/>
                                     </option>
                                 </t>
                             </select>
 
-
-                            <label>País</label>
-                            <select name="country_id" class="form-control" required="required">
+                            <label for="country_id">País</label>
+                            <select name="country_id" id="country_id" class="form-control" required="required">
                                 <option value="">Seleccione un país</option>
                                 <t t-foreach="countries" t-as="c">
-                                    <option t-att-value="c.id">
+                                    <option t-att-value="c.id" t-att-selected="partner and partner.country_id and c.id == partner.country_id.id">
                                         <t t-esc="c.name"/>
                                     </option>
                                 </t>
                             </select>
 
 
-                            <label>Uso de CFDI</label>
-                            <input type="text" name="cfdi" class="form-control" required="required" placeholder="El tipo de origen podría ser: - 01: Nota de crédito - 02: Nota de débito de los documentos relacionados - 03: Devolución de mercancía sobre facturas o traslados previos
-                                - 04: Sustitución de los CFDI previos
-                                - 05: Traslados de mercancías facturados previamente
-                                - 06: Factura generada por los traslados previos
-                                - 07: CFDI por aplicación de anticipo"
-                                title="Tipo de origen | UUID1, UUID2, ..., UUIDn. Tipos: 01=Nota crédito, 02=Nota débito, 03=Devolución, 04=Sustitución, 05=Traslados, 06=Factura traslados, 07=Anticipo"/>
+                            <label for="l10n_mx_edi_usage">Uso de CFDI</label>
+                            <select name="l10n_mx_edi_usage" id="l10n_mx_edi_usage" class="form-control" required="required">
+                                <option value="">Seleccione un uso de CFDI</option>
+                                <t t-foreach="cfdi_usage_options" t-as="usage">
+                                    <option t-att-value="usage[0]">
+                                        <t t-esc="usage[0]"/> - <t t-esc="usage[1]"/>
+                                    </option>
+                                </t>
+                            </select>
 
-                            <label>Forma de pago</label>
-                            <select name="payment_method_id" class="form-control" required="required">
+                            <!-- <label for="payment_method_id">Forma de pago</label>
+                            <select name="payment_method_id" id="payment_method_id" class="form-control" required="required">
                                 <option value="">Seleccione un metodo de pago</option>
                                 <t t-foreach="payment_method" t-as="p">
                                     <option t-att-value="p.id">
                                         <t t-esc="p.name"/>
                                     </option>
                                 </t>
-                            </select>
+                            </select> -->
 
-                            <label>Regimen fiscal</label>
-                            <select name="fiscal_regime_id" class="form-control" required="required">
+                            <label for="l10n_mx_edi_fiscal_regime">Regimen fiscal</label>
+                            <select name="l10n_mx_edi_fiscal_regime" id="l10n_mx_edi_fiscal_regime" class="form-control" required="required">
                                 <option value="">Seleccione un regimen fiscal</option>
-                                <t t-foreach="fiscal_regime" t-as="f">
-                                    <option t-att-value="f.id">
-                                        <t t-esc="f.name"/>
+                                <t t-foreach="fiscal_regime_usage_options" t-as="f">
+                                    <option t-att-value="f[0]" 
+                                            t-att-selected="partner and partner.l10n_mx_edi_fiscal_regime and f[0] == partner.l10n_mx_edi_fiscal_regime">
+                                        <t t-esc="f[0]"/> - <t t-esc="f[1]"/>
                                     </option>
                                 </t>
                             </select>
@@ -138,11 +202,29 @@
                         Buscar otro pedido
                     </a>
 
+                    <!-- Script para mostrar loader al enviar formulario -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var form = document.getElementById('factura-form');
+                            var loadingOverlay = document.getElementById('loading-overlay');
+                            var submitBtn = document.getElementById('submit-btn');
+                            
+                            form.addEventListener('submit', function(e) {
+                                // Mostrar loader
+                                loadingOverlay.style.display = 'block';
+                                
+                                // Deshabilitar botón para evitar doble clic
+                                submitBtn.disabled = true;
+                                submitBtn.innerHTML = 'Procesando...';
+                                
+                                // El formulario se enviará normalmente
+                            });
+                        });
+                    </script>
+
                 </div>
             </t>
         </template>
-
-
 
 
         <!-- REGISTRO DE LA PÁGINA WEBSITE -->

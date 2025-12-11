@@ -26,6 +26,7 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
+        "views/invoice_portal_templates.xml",
         "views/pages.xml",
     ],
     # only loaded in demonstration mode

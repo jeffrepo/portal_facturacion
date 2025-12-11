@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Heredar la plantilla portal_invoice_page -->
+        <template id="portal_invoice_page_custom" inherit_id="account.portal_invoice_page" name="Invoice Portal Custom">
+            <!-- Ubicar el div donde están los botones de descarga e impresión -->
+            <xpath expr="//ul[hasclass('list-group')]//li[hasclass('list-group-item') and position()=1]" position="inside">
+                <!-- Agregar nuevo botón después de los botones de PDF -->
+                <li class="list-group-item flex-grow-1 mt-2">
+                    <div class="btn-group flex-grow-1 mb-1">
+                        <a class="btn btn-primary btn-block"
+                           href="/portal/facturacion"
+                           title="Volver a Facturación">
+                            <i class="fa fa-arrow-left"/> Buscar otro pedido
+                        </a>
+                    </div>
+                </li>
+            </xpath>
+        </template>
+    </data>
+</odoo>
