@@ -3,18 +3,49 @@
     <data>
         <!-- Heredar la plantilla portal_invoice_page -->
         <template id="portal_invoice_page_custom" inherit_id="account.portal_invoice_page" name="Invoice Portal Custom">
-            <!-- Ubicar el div donde están los botones de descarga e impresión -->
-            <xpath expr="//ul[hasclass('list-group')]//li[hasclass('list-group-item') and position()=1]" position="inside">
-                <!-- Agregar nuevo botón después de los botones de PDF -->
+            
+            <!-- 1. Eliminar la sección del vendedor -->
+            <xpath expr="//ul[contains(@class, 'list-group')]/li[position()=2]" position="replace">
+                <!-- Elimina el segundo LI dentro de la lista (que es el del vendedor) -->
+            </xpath>
+            
+            <!-- 2. Agregar nuevo botón después de los botones de PDF -->
+            <xpath expr="//div[contains(@class, 'o_download_pdf')]/ancestor::li[contains(@class, 'list-group-item')]" position="after">
                 <li class="list-group-item flex-grow-1 mt-2">
                     <div class="btn-group flex-grow-1 mb-1">
                         <a class="btn btn-primary btn-block"
-                           href="/portal/facturacion"
-                           title="Volver a Facturación">
+                           href="/portal/facturacion">
                             <i class="fa fa-arrow-left"/> Buscar otro pedido
                         </a>
                     </div>
                 </li>
+            </xpath>
+            
+            <!-- 3. Agregar CSS usando un lugar diferente - CORRECCIÓN -->
+            <xpath expr="//div[contains(@class, 'o_portal_html_view')]" position="before">
+                <style>
+                    /* Elimina todo el header */
+                    header:not(.o_portal_navbar),
+                    .o_header_affixed,
+                    .o_main_navbar,
+                    #top_menu,
+                    #wrapwrap > header,
+                    .navbar,
+                    .o_main_navbar {
+                        display: none !important;
+                    }
+                    
+                    /* También elimina el espacio que ocupa */
+                    body {
+                        padding-top: 0 !important;
+                    }
+                    
+                    /* Color morado para botones */
+                    .btn-primary, button[type="submit"] {
+                        background-color: #4D179A !important;
+                        border-color: #4D179A !important;
+                    }
+                </style>
             </xpath>
         </template>
     </data>
