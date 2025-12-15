@@ -526,6 +526,309 @@
             </t>
         </template>
 
+        <template id="portal_legal_tax_notice_view" name="Aviso legal y fiscal Quemen">
+            <t t-call="website.layout">
+                <t t-set="head">
+                    <style>
+                        /* Elimina todo el header */
+                        header:not(.o_portal_navbar),
+                        .o_header_affixed,
+                        .o_main_navbar,
+                        #top_menu,
+                        #wrapwrap > header,
+                        .navbar,
+                        .o_main_navbar,
+                        .o_header_affix,
+                        .o_fixed_header,
+                        .o_top_menu,
+                        .o_menu_header_lvl_1,
+                        .o_mobile_menu_toggle,
+                        .o_header_navbar,
+                        .o_mega_menu,
+                        .o_affix_enabled > header {
+                            display: none !important;
+                            visibility: hidden !important;
+                            height: 0 !important;
+                            min-height: 0 !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            opacity: 0 !important;
+                        }
+                        
+                        /* También elimina el espacio que ocupa */
+                        body {
+                            padding-top: 0 !important;
+                            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+                            min-height: 100vh;
+                        }
+                        
+                        /* Botones morados */
+                        .btn-primary,
+                        button[type="submit"],
+                        .btn,
+                        .o_form_button_edit,
+                        .o_form_button_create,
+                        .o_form_button_save,
+                        .o_searchview_button_search {
+                            background-color: #2F0D68 !important;
+                            border-color: #2F0D68 !important;
+                            color: white !important;
+                        }
+                        
+                        /* Estilos para la página */
+                        .portal-container {
+                            max-width: 900px;
+                            margin: 0 auto;
+                            padding: 30px 20px 60px;
+                        }
+                        
+                        .logo-container {
+                            text-align: center;
+                            margin-bottom: 40px;
+                            padding-top: 30px;
+                        }
+                        
+                        .portal-logo {
+                            max-width: 280px;
+                            height: auto;
+                            transition: transform 0.3s ease;
+                        }
+                        
+                        .portal-logo:hover {
+                            transform: scale(1.02);
+                        }
+                        
+                        .legal-content-container {
+                            background: white;
+                            padding: 50px;
+                            border-radius: 15px;
+                            box-shadow: 0 10px 40px rgba(47, 13, 104, 0.08);
+                            position: relative;
+                            border-left: 5px solid #2F0D68;
+                        }
+                        
+                        .legal-header {
+                            text-align: center;
+                            margin-bottom: 40px;
+                            padding-bottom: 25px;
+                            border-bottom: 2px solid #f0f0f0;
+                        }
+                        
+                        .legal-header h1 {
+                            color: #2F0D68;
+                            font-size: 2.5rem;
+                            font-weight: 700;
+                            margin-bottom: 15px;
+                            position: relative;
+                            display: inline-block;
+                        }
+                        
+                        .legal-header h1:after {
+                            content: '';
+                            position: absolute;
+                            bottom: -10px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            width: 80px;
+                            height: 4px;
+                            background: linear-gradient(90deg, #2F0D68, #6A11CB);
+                            border-radius: 2px;
+                        }
+                        
+                        .company-name {
+                            color: #2F0D68;
+                            font-size: 1.2rem;
+                            font-weight: 600;
+                            display: block;
+                            margin-top: 10px;
+                        }
+                        
+                        .section-container {
+                            margin-bottom: 35px;
+                        }
+                        
+                        .section-title {
+                            color: #2F0D68;
+                            font-size: 1.4rem;
+                            font-weight: 600;
+                            margin-bottom: 15px;
+                            padding-left: 15px;
+                            border-left: 4px solid #2F0D68;
+                            background: linear-gradient(90deg, rgba(47, 13, 104, 0.05), transparent);
+                            padding: 12px 15px;
+                            border-radius: 0 8px 8px 0;
+                        }
+                        
+                        .section-content {
+                            color: #444;
+                            line-height: 1.8;
+                            font-size: 1.05rem;
+                            padding: 0 15px;
+                        }
+                        
+                        .highlight-text {
+                            color: #2F0D68;
+                            font-weight: 600;
+                        }
+                        
+                        .footer-notice {
+                            text-align: center;
+                            margin-top: 50px;
+                            padding-top: 30px;
+                            border-top: 2px solid #f0f0f0;
+                            color: #666;
+                            font-size: 0.95rem;
+                        }
+                        
+                        .copyright {
+                            background: #2F0D68;
+                            color: white;
+                            padding: 20px;
+                            text-align: center;
+                            border-radius: 8px;
+                            margin-top: 40px;
+                            font-weight: 500;
+                            letter-spacing: 0.5px;
+                        }
+                        
+                        /* Responsive */
+                        @media (max-width: 768px) {
+                            .portal-container {
+                                padding: 20px 15px 40px;
+                            }
+                            
+                            .legal-content-container {
+                                padding: 30px 20px;
+                            }
+                            
+                            .legal-header h1 {
+                                font-size: 2rem;
+                            }
+                            
+                            .section-title {
+                                font-size: 1.2rem;
+                            }
+                            
+                            .portal-logo {
+                                max-width: 220px;
+                            }
+                        }
+                        
+                        /* Animaciones */
+                        .fade-in {
+                            animation: fadeIn 0.8s ease-out;
+                        }
+                        
+                        @keyframes fadeIn {
+                            from {
+                                opacity: 0;
+                                transform: translateY(20px);
+                            }
+                            to {
+                                opacity: 1;
+                                transform: translateY(0);
+                            }
+                        }
+                    </style>
+                </t>
+
+                <div class="portal-container fade-in">
+                    <!-- LOGO -->
+                    <div class="logo-container">
+                        <img t-att-src="'/portal_facturacion/static/src/img/logos-01.png'" 
+                            alt="Logo Pastelerías Quemen" 
+                            class="portal-logo img-fluid"/>
+                    </div>
+
+                    <!-- CONTENIDO LEGAL -->
+                    <div class="legal-content-container">
+                        <!-- Encabezado -->
+                        <div class="legal-header">
+                            <h1>Aviso Legal y Fiscal</h1>
+                            <span class="company-name">Maquiladora Pastelera, S.A. de C.V.</span>
+                        </div>
+                        
+                        <!-- Introducción -->
+                        <div class="section-container">
+                            <p class="section-content">
+                                <span class="highlight-text">Maquiladora Pastelera, S.A. de C.V.</span>, con domicilio fiscal conforme a lo registrado ante el Servicio de Administración Tributaria (SAT), pone a disposición de los usuarios el presente <span class="highlight-text">Aviso Legal y Fiscal</span>, que regula el uso del sitio web y del portal de facturación electrónica de <span class="highlight-text">Pastelerías Quemen</span>.
+                            </p>
+                        </div>
+                        
+                        <!-- Sección 1 -->
+                        <div class="section-container">
+                            <h2 class="section-title">1. Uso del sitio web</h2>
+                            <p class="section-content">
+                                El acceso y uso de este sitio web atribuye la condición de usuario e implica la aceptación plena y sin reservas de las disposiciones incluidas en este Aviso Legal.
+                            </p>
+                            <p class="section-content">
+                                El portal tiene como finalidad principal facilitar la consulta, generación y descarga de comprobantes fiscales digitales por internet (CFDI) derivados de operaciones comerciales realizadas con <span class="highlight-text">Maquiladora Pastelera, S.A. de C.V. (Pastelerías Quemen)</span>.
+                            </p>
+                        </div>
+                        
+                        <!-- Sección 2 -->
+                        <div class="section-container">
+                            <h2 class="section-title">2. Facturación electrónica (CFDI)</h2>
+                            <p class="section-content">
+                                La información ingresada por el usuario para efectos de facturación es responsabilidad exclusiva del solicitante, quien deberá verificar que los datos fiscales proporcionados (RFC, razón social, régimen fiscal, uso de CFDI y domicilio fiscal) sean correctos y coincidan con los registrados ante el SAT.
+                            </p>
+                            <p class="section-content">
+                                <span class="highlight-text">Maquiladora Pastelera, S.A. de C.V.</span> no será responsable por errores derivados de datos incorrectos proporcionados por el usuario.
+                            </p>
+                            <p class="section-content">
+                                Los CFDI emitidos cumplen con las disposiciones fiscales vigentes establecidas por el SAT.
+                            </p>
+                        </div>
+                        
+                        <!-- Sección 3 -->
+                        <div class="section-container">
+                            <h2 class="section-title">3. Propiedad intelectual</h2>
+                            <p class="section-content">
+                                Todos los contenidos del sitio web, incluyendo de manera enunciativa más no limitativa: textos, logotipos, imágenes, diseños, marcas, nombres comerciales y signos distintivos, son propiedad de <span class="highlight-text">Maquiladora Pastelera, S.A. de C.V.</span>, o cuentan con los derechos de uso correspondientes, y se encuentran protegidos por la legislación mexicana en materia de propiedad intelectual.
+                            </p>
+                            <p class="section-content">
+                                Queda prohibida su reproducción, distribución o uso sin autorización previa y por escrito del titular.
+                            </p>
+                        </div>
+                        
+                        <!-- Sección 4 -->
+                        <div class="section-container">
+                            <h2 class="section-title">4. Protección de datos personales</h2>
+                            <p class="section-content">
+                                Los datos personales recabados a través de este sitio serán tratados conforme a lo establecido en el <span class="highlight-text">Aviso de Privacidad</span>, disponible para su consulta en este mismo sitio web, y en cumplimiento de la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.
+                            </p>
+                        </div>
+                        
+                        <!-- Sección 5 -->
+                        <div class="section-container">
+                            <h2 class="section-title">5. Limitación de responsabilidad</h2>
+                            <p class="section-content">
+                                <span class="highlight-text">Maquiladora Pastelera, S.A. de C.V.</span> no garantiza la disponibilidad continua del sitio web ni se hace responsable por fallas técnicas, interrupciones del servicio o causas ajenas a su control que impidan el acceso temporal al portal.
+                            </p>
+                        </div>
+                        
+                        <!-- Sección 6 -->
+                        <div class="section-container">
+                            <h2 class="section-title">6. Legislación aplicable y jurisdicción</h2>
+                            <p class="section-content">
+                                Este Aviso Legal se rige por las leyes aplicables de los Estados Unidos Mexicanos. Para cualquier controversia derivada del uso de este sitio web, las partes se someten a la jurisdicción de los tribunales competentes en México, renunciando a cualquier otro fuero que pudiera corresponderles por razón de su domicilio presente o futuro.
+                            </p>
+                        </div>
+                        
+                        <!-- Línea divisoria -->
+                        <div class="footer-notice">
+                            <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
+                        </div>
+                        
+                        <!-- Copyright -->
+                        <div class="copyright">
+                            © 2025 Maquiladora Pastelera, S.A. de C.V. Todos los derechos reservados.
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
 
         <!-- REGISTRO DE LA PÁGINA WEBSITE -->
         <record id="portal_facturacion_page" model="website.page">
@@ -533,6 +836,13 @@
             <field name="url">/portal/facturacion</field>
             <field name="website_published">true</field>
             <field name="view_id" ref="portal_facturacion.portal_facturacion_page_view"/>
+        </record>
+
+        <record id="portal_facturacion_legal_tax_notice" model="website.page">
+            <field name="name">Aviso legal y fiscal</field>
+            <field name="url">/portal/legal</field>
+            <field name="website_published">true</field>
+            <field name="view_id" ref="portal_facturacion.portal_legal_tax_notice_view"/>
         </record>
 
     </data>
