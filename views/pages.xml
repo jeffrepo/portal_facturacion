@@ -5,6 +5,79 @@
         <!-- TEMPLATE (debe ir antes de usarlo en website.page) -->
         <template id="portal_facturacion_page_view" name="Portal Facturación Página">
             <t t-call="website.layout">
+
+                <!-- CSS personalizado para esconder TODO el header -->
+                <t t-set="head">
+                    <style>
+                        /* Elimina todo el header */
+                        header:not(.o_portal_navbar),
+                        .o_header_affixed,
+                        .o_main_navbar,
+                        #top_menu,
+                        #wrapwrap > header,
+                        .navbar,
+                        .o_main_navbar,
+                        .o_header_affix,
+                        .o_fixed_header,
+                        .o_top_menu,
+                        .o_menu_header_lvl_1,
+                        .o_mobile_menu_toggle,
+                        .o_header_navbar,
+                        .o_mega_menu,
+                        .o_affix_enabled > header {
+                            display: none !important;
+                            visibility: hidden !important;
+                            height: 0 !important;
+                            min-height: 0 !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            opacity: 0 !important;
+                        }
+                        
+                        /* También elimina el espacio que ocupa */
+                        body {
+                            padding-top: 0 !important;
+                        }
+                        
+                        /* Botones morados */
+                        .btn-primary,
+                        button[type="submit"],
+                        .btn,
+                        .o_form_button_edit,
+                        .o_form_button_create,
+                        .o_form_button_save,
+                        .o_searchview_button_search {
+                            background-color: #2F0D68 !important;
+                            border-color: #2F0D68 !important;
+                            color: white !important;
+                        }
+                        
+                        /* Estilos para la página */
+                        .portal-container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 40px 20px;
+                        }
+                        
+                        .logo-container {
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        
+                        .portal-logo {
+                            max-width: 300px;
+                            height: auto;
+                        }
+                        
+                        .form-container {
+                            background: white;
+                            padding: 30px;
+                            border-radius: 10px;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                        }
+                    </style>
+                </t>
+
                 <div class="container mt-4">
 
                     <h1>Portal de Facturación</h1>
@@ -24,11 +97,92 @@
                     </form>
 
                 </div>
+
+                <!-- LOGO - RUTA RELATIVA -->
+                <div class="logo-container">
+                    <img t-att-src="'/portal_facturacion/static/src/img/logos-01.png'" 
+                            alt="Logo" 
+                            class="portal-logo img-fluid"/>
+                </div>
             </t>
         </template>
+        
 
         <template id="portal_facturacion_no_encontrado" name="Pedido No Encontrado">
             <t t-call="website.layout">
+                
+                <!-- CSS personalizado para esconder navbar -->
+                <t t-set="head">
+                    <style>
+                        /* Elimina todo el header */
+                        header:not(.o_portal_navbar),
+                        .o_header_affixed,
+                        .o_main_navbar,
+                        #top_menu,
+                        #wrapwrap > header,
+                        .navbar,
+                        .o_main_navbar,
+                        .o_header_affix,
+                        .o_fixed_header,
+                        .o_top_menu,
+                        .o_menu_header_lvl_1,
+                        .o_mobile_menu_toggle,
+                        .o_header_navbar,
+                        .o_mega_menu,
+                        .o_affix_enabled > header {
+                            display: none !important;
+                            visibility: hidden !important;
+                            height: 0 !important;
+                            min-height: 0 !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            opacity: 0 !important;
+                        }
+                        
+                        /* También elimina el espacio que ocupa */
+                        body {
+                            padding-top: 0 !important;
+                        }
+                        
+                        /* Botones morados */
+                        .btn-primary,
+                        button[type="submit"],
+                        .btn,
+                        .o_form_button_edit,
+                        .o_form_button_create,
+                        .o_form_button_save,
+                        .o_searchview_button_search {
+                            background-color: #2F0D68 !important;
+                            border-color: #2F0D68 !important;
+                            color: white !important;
+                        }
+                        
+                        /* Estilos para la página */
+                        .portal-container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 40px 20px;
+                        }
+                        
+                        .logo-container {
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        
+                        .portal-logo {
+                            max-width: 300px;
+                            height: auto;
+                        }
+                        
+                        .form-container {
+                            background: white;
+                            padding: 30px;
+                            border-radius: 10px;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                        }
+                    </style>
+                </t>
+
                 <div class="container mt-4">
                     <h2>No se ha encontrado ningún pedido</h2>
                     <p>
@@ -45,6 +199,79 @@
 
         <template id="portal_facturacion_identificar_cliente" name="Identificación de Cliente CFDI">
             <t t-call="website.layout">
+                
+                <!-- CSS personalizado para esconder navbar -->
+                <t t-set="head">
+                    <style>
+                        /* Elimina todo el header */
+                        header:not(.o_portal_navbar),
+                        .o_header_affixed,
+                        .o_main_navbar,
+                        #top_menu,
+                        #wrapwrap > header,
+                        .navbar,
+                        .o_main_navbar,
+                        .o_header_affix,
+                        .o_fixed_header,
+                        .o_top_menu,
+                        .o_menu_header_lvl_1,
+                        .o_mobile_menu_toggle,
+                        .o_header_navbar,
+                        .o_mega_menu,
+                        .o_affix_enabled > header {
+                            display: none !important;
+                            visibility: hidden !important;
+                            height: 0 !important;
+                            min-height: 0 !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            opacity: 0 !important;
+                        }
+                        
+                        /* También elimina el espacio que ocupa */
+                        body {
+                            padding-top: 0 !important;
+                        }
+                        
+                        /* Botones morados */
+                        .btn-primary,
+                        button[type="submit"],
+                        .btn,
+                        .o_form_button_edit,
+                        .o_form_button_create,
+                        .o_form_button_save,
+                        .o_searchview_button_search {
+                            background-color: #2F0D68 !important;
+                            border-color: #2F0D68 !important;
+                            color: white !important;
+                        }
+                        
+                        /* Estilos para la página */
+                        .portal-container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 40px 20px;
+                        }
+                        
+                        .logo-container {
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        
+                        .portal-logo {
+                            max-width: 300px;
+                            height: auto;
+                        }
+                        
+                        .form-container {
+                            background: white;
+                            padding: 30px;
+                            border-radius: 10px;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                        }
+                    </style>
+                </t>
+
                 <div class="container mt-4">
                     <h1>Facturación CFDI</h1>
                     <h3>Pedido: <t t-esc="order.pos_reference"/></h3>
@@ -80,6 +307,79 @@
 
         <template id="portal_facturacion_detalle" name="Detalle Factura">
             <t t-call="website.layout">
+                
+                <!-- CSS personalizado para esconder navbar -->
+                <t t-set="head">
+                    <style>
+                        /* Elimina todo el header */
+                        header:not(.o_portal_navbar),
+                        .o_header_affixed,
+                        .o_main_navbar,
+                        #top_menu,
+                        #wrapwrap > header,
+                        .navbar,
+                        .o_main_navbar,
+                        .o_header_affix,
+                        .o_fixed_header,
+                        .o_top_menu,
+                        .o_menu_header_lvl_1,
+                        .o_mobile_menu_toggle,
+                        .o_header_navbar,
+                        .o_mega_menu,
+                        .o_affix_enabled > header {
+                            display: none !important;
+                            visibility: hidden !important;
+                            height: 0 !important;
+                            min-height: 0 !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            opacity: 0 !important;
+                        }
+                        
+                        /* También elimina el espacio que ocupa */
+                        body {
+                            padding-top: 0 !important;
+                        }
+                        
+                        /* Botones morados */
+                        .btn-primary,
+                        button[type="submit"],
+                        .btn,
+                        .o_form_button_edit,
+                        .o_form_button_create,
+                        .o_form_button_save,
+                        .o_searchview_button_search {
+                            background-color: #2F0D68 !important;
+                            border-color: #2F0D68 !important;
+                            color: white !important;
+                        }
+                        
+                        /* Estilos para la página */
+                        .portal-container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 40px 20px;
+                        }
+                        
+                        .logo-container {
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        
+                        .portal-logo {
+                            max-width: 300px;
+                            height: auto;
+                        }
+                        
+                        .form-container {
+                            background: white;
+                            padding: 30px;
+                            border-radius: 10px;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                        }
+                    </style>
+                </t>
+
                 <div class="container mt-4">
                     <h1>Comprobante Fiscal Digital</h1>
 
