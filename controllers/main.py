@@ -207,6 +207,7 @@ class PortalFacturacionController(http.Controller):
                 print(f"Estado de la factura {order_found.account_move.state}")
                 if order_found.account_move.state == 'draft':
                     order_found.account_move.action_post()
+                    request.env.cr.commit()
                     if order_found.account_move.state == 'post':
                         order_found.account_move.button_process_edi_web_services()
                 else:
