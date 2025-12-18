@@ -11,10 +11,10 @@ class PortalFacturacionController(http.Controller):
     # 1. RUTA: /portal/facturacion/buscar
     @http.route('/portal/facturacion/buscar', type='http', auth='public', methods=['POST'], csrf=False, website=True)
     def buscar_pedido(self, **post):
-        numero = post.get('order_number')
+        numero = post.get('order_number_1')+"-"+post.get('order_number_2')+"-"+ post.get('order_number_3')
         _logger.info("Pedido recibido: %s", numero)
 
-        order = request.env['pos.order'].sudo().search([('pos_reference', '=', numero)], limit=1)
+        order = request.env['pos.order'].sudo().search([('pos_reference', 'ilike', numero)], limit=1)
 
         if order:
             if order.account_move:
@@ -140,40 +140,42 @@ class PortalFacturacionController(http.Controller):
         })
     
     @http.route('/portal/facturacion/crear_factura', type='http', auth='public', methods=['POST'], csrf=False, website=True)
-    def create_invoice(self, order_id, company_name, r_f_C, zip, street, ext, int, cologne, city, state_id, country_id, l10n_mx_edi_usage, l10n_mx_edi_fiscal_regime, **kwargs):
+    def create_invoice(
+        self,
+        order_id,
+        company_name,
+        r_f_C,
+        zip,
+        street,
+        ext,
+        int,  # (lo dejo igual como pediste)
+        cologne,
+        city,
+        state_id,
+        country_id,
+        l10n_mx_edi_usage,
+        l10n_mx_edi_fiscal_regime,
+        **kwargs
+    ):
         print("\n========== INICIANDO PROCESO DE FACTURACIÓN ==========\n")
         print(f"Order ID recibido: {order_id} regimen fiscal {l10n_mx_edi_fiscal_regime}")
-
+    
         order_found = request.env['pos.order'].sudo().search([('id', '=', order_id)], limit=1)
-        country_found = request.env['res.country'].sudo().search([('id', '=', country_id)])
-        state_found = request.env['res.country.state'].sudo().search([('id', '=', state_id)])
-        
+        country_found = request.env['res.country'].sudo().search([('id', '=', country_id)], limit=1)
+        state_found = request.env['res.country.state'].sudo().search([('id', '=', state_id)], limit=1)
+    
         print(f"Order encontrada: {order_found}")
         print(f"País encontrado: {country_found}")
         print(f"Estado encontrado: {state_found}")
-        print(f"Datos recibidos -> company_name: {company_name}, zip: {zip}, street: {street}, city: {city}\n")
-
+    
+        # -------------------------------------------------
         # 1. Buscar o crear partner
+        # -------------------------------------------------
         if company_name:
             partner = request.env['res.partner'].sudo().search([('vat', '=', r_f_C)], limit=1)
-
-            if partner:
-                print(f"Partner existente encontrado: {partner.id} - {partner.name}")
-                order_found.write({'partner_id': partner.id})
-                partner.write({
-                    'name': company_name,
-                    'zip': zip,
-                    'street': street,
-                    'city': city,
-                    'state_id': state_found.id,
-                    'country_id': country_found.id,
-                    'company_id': order_found.company_id.id,
-                    'l10n_mx_edi_colony': cologne,
-                    'l10n_mx_edi_fiscal_regime': l10n_mx_edi_fiscal_regime,
-                })
-            else:
-                print("Partner NO existe, creando uno nuevo...")
-                new_partner_vals = {
+    
+            if not partner:
+                partner = request.env['res.partner'].sudo().create({
                     'name': company_name,
                     'vat': r_f_C,
                     'zip': zip,
@@ -184,80 +186,61 @@ class PortalFacturacionController(http.Controller):
                     'company_id': order_found.company_id.id,
                     'l10n_mx_edi_colony': cologne,
                     'l10n_mx_edi_fiscal_regime': l10n_mx_edi_fiscal_regime,
-                }
-
-                print(f"Valores del nuevo partner: {new_partner_vals}")
-                partner = request.env['res.partner'].sudo().create(new_partner_vals)
-                print(f"Partner creado con ID: {partner.id}")
-
-                order_found.write({'partner_id': partner.id})
-                print(f"Partner asignado a la orden POS: {partner.id}")
-
-            # 2. Crear factura desde POS
-            print("\n→ Creando factura desde POS…")
-            order_found.action_pos_order_invoice()
-            request.env.cr.commit()
-
-            print(f"Factura generada: {order_found.account_move}")
-
-            # 3. Validar factura (post)
-            if order_found.account_move:
-                order_found.account_move.l10n_mx_edi_usage = l10n_mx_edi_usage
-                print("→ Validando factura…")
-                print(f"Estado de la factura {order_found.account_move.state}")
-                if order_found.account_move.state == 'draft':
-
-                    order_found.account_move.action_post()
-                    #Primero que se ejecute la accion anterior
-                    request.env.cr.commit()
-                    #Verificamos que este publicada la factura
-                    if order_found.account_move.state == 'post':
-                        order_found.account_move.button_process_edi_web_services()
-                else:
-                    print(f"Factura validada correctamente. ID: {order_found.account_move.id}")
-            else:
-                print("⚠ ERROR: La factura no se generó correctamente.")
-        
-        # 4. Redirigir a vista previa de factura
-        invoice = order_found.account_move
-
-        if invoice:
-            print(f"\nFactura encontrada para vista previa: {invoice.id}")
-            
-            try:
-                # SOLUCIÓN: Usar with_context para proporcionar el contexto necesario
-                # Necesitamos simular un contexto con active_id y active_model
-                share_action = invoice.sudo().with_context(
-                    active_model='account.move',
-                    active_id=invoice.id,
-                    active_ids=[invoice.id]
-                ).action_share()
-                
-                # El resultado de action_share() es un diccionario con la acción de ventana
-                # Pero necesitamos la URL real del portal
-                if not invoice.access_token:
-                    # Asegurar que tiene token de acceso
-                    invoice.sudo()._portal_ensure_token()
-                
-                # Generar la URL del portal correctamente
-                # Usar get_portal_url() que ya maneja los tokens
-                portal_url = invoice.get_portal_url()
-                print(f"URL del portal generada: {portal_url}")
-                
-                # Redirigir al portal
-                return request.redirect(portal_url)
-                
-            except Exception as e:
-                print(f"Error en action_share: {e}")
-                # Fallback seguro
-                if not invoice.access_token:
-                    invoice.sudo()._portal_ensure_token()
-                
-                # Usar método directo para obtener URL
-                fallback_url = f"/my/invoices/{invoice.id}?access_token={invoice.access_token}"
-                print(f"Usando URL de fallback: {fallback_url}")
-                return request.redirect(fallback_url)
-
-        print("\n⚠ No se pudo obtener la factura. Redirigiendo al portal de búsqueda.")
-        return request.redirect('/portal/facturacion/buscar')   
+                })
     
+            order_found.write({'partner_id': partner.id})
+    
+        # -------------------------------------------------
+        # 2. Crear factura desde POS
+        # -------------------------------------------------
+        print("→ Creando factura desde POS")
+        order_found.action_pos_order_invoice()
+        request.env.cr.commit()
+    
+        print(f"Factura generada: {order_found.account_move}")
+    
+        # -------------------------------------------------
+        # 3. Publicar factura
+        # -------------------------------------------------
+        if order_found.account_move:
+            order_found.account_move.l10n_mx_edi_usage = l10n_mx_edi_usage
+    
+            if order_found.account_move.state == 'draft':
+                order_found.account_move.action_post()
+                request.env.cr.commit()
+    
+            # -------------------------------------------------
+            # 🔥 CAMBIO CLAVE PARA TIMBRAR
+            # -------------------------------------------------
+    
+            # 1️⃣ Recargar factura con search (NO browse)
+            invoice = request.env['account.move'].sudo().search(
+                [('id', '=', order_found.account_move.id)],
+                limit=1
+            )
+    
+            print(f"Factura recargada | Estado: {invoice.state}")
+    
+            # 2️⃣ Ejecutar EDI con usuario interno
+            if invoice and invoice.state == 'posted':
+                print("🚀 Ejecutando timbrado CFDI")
+                admin = request.env.ref('base.user_admin')
+                invoice.with_user(admin).button_process_edi_web_services()
+    
+        else:
+            print("⚠ ERROR: La factura no se generó correctamente.")
+    
+        # -------------------------------------------------
+        # 4. Redirigir a portal
+        # -------------------------------------------------
+        invoice = order_found.account_move
+    
+        if invoice:
+            if not invoice.access_token:
+                invoice.sudo()._portal_ensure_token()
+    
+            portal_url = f"/my/invoices/{invoice.id}?access_token={invoice.access_token}"
+            print(f"Redirigiendo a: {portal_url}")
+            return request.redirect(portal_url)
+    
+        return request.redirect('/portal/facturacion/buscar')

@@ -12,9 +12,15 @@
             <!-- 2. Agregar nuevo botón después de los botones de PDF -->
             <xpath expr="//div[contains(@class, 'o_download_pdf')]/ancestor::li[contains(@class, 'list-group-item')]" position="after">
                 <li class="list-group-item flex-grow-1 mt-2">
-                    <div class="btn-group flex-grow-1 mb-1">
+                    <div class="btn-group flex-grow-1 mb-1" style="width: 100%;">
+                        <a class="btn btn-secondary btn-block"
+                        t-attf-href="/my/invoices/download_xml/#{invoice.id}" target="_blank"
+                        style="margin-right: 5px; border-radius:10px; height:40px">
+                            <i class="fa fa-file-code-o"/> Descargar XML
+                        </a>
+                        <br/>
                         <a class="btn btn-primary btn-block"
-                           href="/portal/facturacion">
+                        href="/portal/facturacion" style="border-radius:10px">
                             <i class="fa fa-arrow-left"/> Buscar otro pedido
                         </a>
                     </div>
