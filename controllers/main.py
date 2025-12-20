@@ -17,7 +17,7 @@ class PortalFacturacionController(http.Controller):
         order = request.env['pos.order'].sudo().search([('pos_reference', 'ilike', numero)], limit=1)
 
         if order:
-            if order.account_move:
+            if order.account_move and not order.account_move.factura_global:
                 invoice = order.account_move
                 try:
                     share_action = invoice.sudo().with_context(
@@ -43,8 +43,13 @@ class PortalFacturacionController(http.Controller):
                     print(f"Usando URL de fallback: {fallback_url}")
                     return request.redirect(fallback_url)
 
-            else:    
-                return request.redirect('/portal/facturacion/identificar_cliente/%s' % order.id)
+            else:
+                if order.account_move and order.account_move.factura_global:
+                    return request.render("portal_facturacion.portal_facturacion_no_encontrado", {
+                        "numero": numero,
+                    })
+                else:
+                    return request.redirect('/portal/facturacion/identificar_cliente/%s' % order.id)
         else:
             return request.render("portal_facturacion.portal_facturacion_no_encontrado", {
                 "numero": numero,
