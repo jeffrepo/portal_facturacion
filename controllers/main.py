@@ -44,7 +44,9 @@ class PortalFacturacionController(http.Controller):
                     return request.redirect(fallback_url)
 
             else:
-                if order.account_move and order.account_move.factura_global and not order.account_move.l10n_mx_edi_cfdi_uuid:
+                if order.account_move and order.account_move.factura_global == False and order.account_move.l10n_mx_edi_cfdi_uuid == False:
+                    return request.redirect('/portal/facturacion/identificar_cliente/%s' % order.id)
+                elif order.account_move and order.account_move.factura_global == True and order.account_move.l10n_mx_edi_cfdi_uuid or order.account_move.l10n_mx_edi_cfdi_uuid == False:
                     return request.render("portal_facturacion.portal_facturacion_no_encontrado", {
                         "numero": numero,
                     })
