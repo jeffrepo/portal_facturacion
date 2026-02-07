@@ -5,12 +5,12 @@
         <template id="portal_invoice_page_custom" inherit_id="account.portal_invoice_page" name="Invoice Portal Custom">
             
             <!-- 1. Eliminar la sección del vendedor -->
-            <xpath expr="//ul[contains(@class, 'list-group')]/li[position()=2]" position="replace">
+            <!-- <xpath expr="//ul[contains(@class, 'list-group')]/li[position()=2]" position="replace"> -->
                 <!-- Elimina el segundo LI dentro de la lista (que es el del vendedor) -->
-            </xpath>
+            <!-- </xpath> -->
             
             <!-- 2. Agregar nuevo botón después de los botones de PDF -->
-            <xpath expr="//div[contains(@class, 'o_download_pdf')]/ancestor::li[contains(@class, 'list-group-item')]" position="after">
+            <!-- <xpath expr="//div[contains(@class, 'o_download_pdf')]/ancestor::li[contains(@class, 'list-group-item')]" position="after">
                 <li class="list-group-item flex-grow-1 mt-2">
                     <div class="btn-group flex-grow-1 mb-1" style="width: 100%;">
                         <a class="btn btn-secondary btn-block"
@@ -25,7 +25,7 @@
                         </a>
                     </div>
                 </li>
-            </xpath>
+            </xpath> -->
             
             <!-- 3. Agregar CSS usando un lugar diferente - CORRECCIÓN -->
             <xpath expr="//div[contains(@class, 'o_portal_html_view')]" position="before">
